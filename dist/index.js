@@ -26,15 +26,34 @@ app.use((0, cors_1.default)());
 app.get("/", (_, res) => {
     res.json({ message: "Server is healthy" });
 });
-app.post("/api/v1/generate", (req, res) => {
-    console.log("ghusa");
+app.post("/api/v1/generate", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const details = req.body;
+    try {
+        yield client.companyDetails.create({
+            data: {
+                userId: details.userId,
+                name: details.name,
+                details: details.details,
+                testimonials: details.testimonials,
+                previous_projects: details.previous_projects,
+                executive_summary: details.executive_summary,
+                pricing_sector: details.pricing_sector,
+                objectives: details.objectives,
+                problems: details.problems,
+                solutions: details.solutions,
+            }
+        });
+    }
+    catch (e) {
+        console.log(e);
+    }
     updateDb(details);
     res.status(200).json({ message: "ok" });
-});
+}));
 function updateDb(details) {
     return __awaiter(this, void 0, void 0, function* () {
         for (let i = 0; i < proposalTemplates.length; i++) {
+            console.log(details);
             const proposal = (yield generate(JSON.stringify(details), i)) || [];
             const generatedProposal = yield client.proposal.create({
                 data: {
